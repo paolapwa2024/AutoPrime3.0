@@ -1,0 +1,214 @@
+/* ============================================================
+   AUTOPRIME — tema "painel de oficina"
+   Paleta: asfalto + aço + âmbar (luz de trabalho) + vermelho (freio)
+   ============================================================ */
+
+:root {
+    --asfalto: #1c1f22;      /* fundo principal, escuro e neutro */
+    --aco: #262a2e;          /* superfícies (cards, navbar) */
+    --aco-claro: #33383d;    /* bordas, divisores */
+    --ambar: #e8a33d;        /* cor de destaque — luz de trabalho */
+    --ambar-escuro: #c4832a;
+    --freio: #c4432b;        /* alertas, status crítico */
+    --giz: #edeae3;          /* texto claro, tipo giz em quadro-negro */
+    --aco-texto: #9aa0a6;    /* texto secundário */
+}
+
+body {
+    background-color: var(--asfalto);
+    color: var(--giz);
+    font-family: 'Inter', -apple-system, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Oswald', 'Inter', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--giz);
+}
+
+/* ---------- NAVBAR: placa estampada ---------- */
+.navbar.bg-dark {
+    background-color: var(--aco) !important;
+    border-bottom: 3px solid var(--ambar);
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+}
+
+.navbar-brand {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    letter-spacing: 0.08em;
+    color: var(--giz) !important;
+    padding-left: 0.75rem;
+    border-left: 3px solid var(--ambar);
+}
+
+.navbar .nav-link {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 0.9rem;
+    letter-spacing: 0.03em;
+    color: var(--aco-texto) !important;
+    padding: 0.4rem 0.9rem !important;
+    position: relative;
+    transition: color 0.15s ease;
+}
+.navbar .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0.9rem;
+    right: 0.9rem;
+    bottom: 0.15rem;
+    height: 2px;
+    background: var(--ambar);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.2s ease;
+}
+.navbar .nav-link:hover {
+    color: var(--giz) !important;
+}
+.navbar .nav-link:hover::after {
+    transform: scaleX(1);
+}
+
+.navbar-toggler {
+    border-color: var(--aco-claro);
+}
+
+/* ---------- CARDS: ficha de ordem de serviço ---------- */
+.card {
+    background-color: var(--aco);
+    border: 1px solid var(--aco-claro);
+    border-left: 3px solid var(--ambar);
+    border-radius: 4px;
+    color: var(--giz);
+}
+.card-header {
+    background-color: var(--aco-claro);
+    border-bottom: 1px solid var(--aco-claro);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
+}
+.card-title {
+    font-size: 1.1rem;
+}
+
+/* placa e números de OS em monoespaçada, como carimbo */
+.card-text strong,
+.card-header strong {
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.04em;
+}
+
+/* ---------- BADGES / STATUS ---------- */
+.badge.bg-secondary {
+    background-color: var(--ambar) !important;
+    color: var(--asfalto) !important;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    border-radius: 3px;
+}
+.badge.bg-light {
+    background-color: var(--aco-claro) !important;
+    color: var(--giz) !important;
+}
+
+/* ---------- TABELAS ---------- */
+.table {
+    background-color: #ffffff;
+    color: var(--asfalto);
+    --bs-table-bg: #ffffff;
+    --bs-table-striped-bg: #f4f4f4;
+    --bs-table-striped-color: var(--asfalto);
+    --bs-table-hover-bg: #fdf1de;
+    --bs-table-hover-color: var(--asfalto);
+    --bs-table-color: var(--asfalto);
+    border-color: #dcdcdc;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+}
+.table > :not(caption) > * > * {
+    color: var(--asfalto) !important;
+    background-color: transparent;
+    box-shadow: none;
+}
+.table thead th {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #6b6f73 !important;
+    background-color: #fafafa;
+    border-bottom: 2px solid var(--ambar);
+}
+.table td {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    border-color: #e6e6e6;
+}
+
+/* ---------- FORMULÁRIOS ---------- */
+.form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--aco-texto);
+    text-transform: uppercase;
+}
+.form-control {
+    background-color: var(--asfalto);
+    border: 1px solid var(--aco-claro);
+    color: var(--giz);
+    font-family: 'JetBrains Mono', monospace;
+}
+.form-control:focus {
+    background-color: var(--asfalto);
+    color: var(--giz);
+    border-color: var(--ambar);
+    box-shadow: 0 0 0 0.2rem rgba(232, 163, 61, 0.25);
+}
+.form-control::placeholder {
+    color: var(--aco-texto);
+    opacity: 0.6;
+}
+
+/* ---------- BOTÕES ---------- */
+.btn-primary {
+    background-color: var(--ambar);
+    border-color: var(--ambar);
+    color: var(--asfalto);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 0.5rem 1.5rem;
+    border-radius: 4px;
+}
+.btn-primary:hover {
+    background-color: var(--ambar-escuro);
+    border-color: var(--ambar-escuro);
+    color: var(--asfalto);
+}
+
+/* ---------- ALERTAS ---------- */
+.alert-danger {
+    background-color: rgba(196, 67, 43, 0.15);
+    border: 1px solid var(--freio);
+    color: #f2b6a8;
+}
+
+.text-muted {
+    color: var(--aco-texto) !important;
+}
+
+/* ---------- CONTAINER ---------- */
+.container.mt-4 {
+    max-width: 900px;
+}

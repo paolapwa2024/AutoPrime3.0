@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Excluir - AutoPrime{% endblock %}
+
+{% block content %}
+<h1>Confirmar exclusão</h1>
+
+<p>Tem certeza que deseja excluir <strong>{{ objeto }}</strong>?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sim, excluir</button>
+    <a href="{% url cancel_url_name %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

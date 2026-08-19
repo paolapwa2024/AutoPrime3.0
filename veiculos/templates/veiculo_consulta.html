@@ -1,9 +1,12 @@
 {% extends 'base.html' %}
+
+{% load static %}
+
 {% block title %}Consultar Meu Veículo{% endblock %}
 
 {% block content %}
 <h2>Consultar meu veículo</h2>
-<p class="text-muted">Informe o modelo e a placa do seu carro para ver o histórico de manutenções.</p>
+<p class="text-muted">Informe o modelo e a placa do seu carro para ver o histórico de ordens de serviço.</p>
 
 <form method="post" class="mb-4">
     {% csrf_token %}
@@ -18,48 +21,86 @@
     <button type="submit" class="btn btn-primary">Consultar</button>
 </form>
 
+<style>
+body {
+    background-image: linear-gradient(rgba(28, 31, 34, 0.75), rgba(28, 31, 34, 0.75)),
+    url("{% static 'img/carros.jpg' %}");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    }
+</style>
+
 {% if erro %}
     <div class="alert alert-danger">{{ erro }}</div>
 {% endif %}
 
 {% if veiculo %}
-<div class="card">
+<div class="card mb-4">
     <div class="card-body">
         <h4 class="card-title">{{ veiculo.marca }} {{ veiculo.modelo }} ({{ veiculo.ano }})</h4>
         <p class="card-text">
             Placa: <strong>{{ veiculo.placa }}</strong> |
-            Cor: {{ veiculo.cor }} |
-            Proprietário: {{ veiculo.proprietario }}
+            Proprietário: {{ veiculo.cliente.nome }}
         </p>
-
-        <h5 class="mt-4">Histórico de Manutenções</h5>
-        {% if manutencoes %}
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Tipo de Serviço</th>
-                    <th>Descrição</th>
-                    <th>Data</th>
-                    <th>Quilometragem</th>
-                    <th>Custo</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for m in manutencoes %}
-                <tr>
-                    <td>{{ m.get_tipo_display }}</td>
-                    <td>{{ m.descricao|default:"—" }}</td>
-                    <td>{{ m.data }}</td>
-                    <td>{{ m.quilometragem|default:"—" }} km</td>
-                    <td>R$ {{ m.custo|default:"—" }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <p>Nenhuma manutenção registrada para este veículo ainda.</p>
-        {% endif %}
     </div>
 </div>
+
+<h5 class="mb-3">Histórico de Ordens de Serviço</h5>
+
+{% if ordens_servico %}
+    {% for os in ordens_servico %}
+    <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <strong>OS #{{ os.id }}</strong>
+            <span class="badge bg-secondary">{{ os.get_status_display }}</span>
+        </div>
+        <div class="card-body">
+            <p><strong>Problema relatado:</strong> {{ os.problema_relatado }}</p>
+            <p><strong>Data de abertura:</strong> {{ os.data_criacao|date:"d/m/Y H:i" }}</p>
+
+            {% if os.diagnostico %}
+            <hr>
+            <p><strong>Diagnóstico</strong> (mecânico: {{ os.diagnostico.mecanico_responsavel }})</p>
+            <p>{{ os.diagnostico.problema_encontrado }}</p>
+            {% endif %}
+
+            {% if os.servicos.all %}
+            <hr>
+            <p><strong>Serviços</strong></p>
+            <table class="table table-sm">
+                <thead>
+                    <tr><th>Descrição</th><th>Valor</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                    {% for servico in os.servicos.all %}
+                    <tr>
+                        <td>{{ servico.descricao }}</td>
+                        <td>R$ {{ servico.valor }}</td>
+                        <td><span class="badge bg-light text-dark">{{ servico.get_status_display }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+
+            {% if os.pagamento %}
+            <hr>
+            <p><strong>Pagamento</strong></p>
+            <p>
+                Valor final: R$ {{ os.pagamento.valor_final }} |
+                Forma: {{ os.pagamento.get_forma_pagamento_display }}
+                {% if os.pagamento.data_entrega %}
+                | Entrega: {{ os.pagamento.data_entrega|date:"d/m/Y H:i" }}
+                {% endif %}
+            </p>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>Nenhuma ordem de serviço registrada para este veículo ainda.</p>
+{% endif %}
 {% endif %}
 {% endblock %}

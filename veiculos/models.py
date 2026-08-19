@@ -1,53 +1,106 @@
 from django.db import models
 
 
-class Veiculo(models.Model):
-    marca = models.CharField(max_length=50, verbose_name='Marca')
-    modelo = models.CharField(max_length=50, verbose_name='Modelo')
-    ano = models.IntegerField(verbose_name='Ano')
-    placa = models.CharField(max_length=8, unique=True, verbose_name='Placa')
-    cor = models.CharField(max_length=30, verbose_name='Cor')
-    proprietario = models.CharField(max_length=100, verbose_name='Proprietário')
-    is_active = models.BooleanField(default=True, verbose_name='Ativo')
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Criado em')
-    updated_at = models.DateTimeField(auto_now=True, verbose_name='Atualizado em')
+class Cliente(models.Model):
+    nome = models.CharField(max_length=100)
+    telefone = models.CharField(max_length=20)
+    email = models.EmailField(blank=True)
 
-    class Meta:
-        ordering = ['marca', 'modelo']
-        verbose_name = 'Veículo'
-        verbose_name_plural = 'Veículos'
+    def __str__(self):
+        return self.nome
+
+
+class Veiculo(models.Model):
+    cliente = models.ForeignKey(
+        Cliente, on_delete=models.CASCADE, related_name='veiculos'
+    )
+    modelo = models.CharField(max_length=100)
+    marca = models.CharField(max_length=100)
+    placa = models.CharField(max_length=10, unique=True)
+    ano = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return f'{self.marca} {self.modelo} - {self.placa}'
 
 
-class Manutencao(models.Model):
-    TIPO_CHOICES = [
-        ('manutencao', 'Manutenção Geral'),
-        ('troca_pneus', 'Troca de Pneus'),
-        ('troca_oleo', 'Troca de Óleo'),
-        ('revisao', 'Revisão'),
-        ('freios', 'Freios'),
-        ('outro', 'Outro'),
+class OrdemServico(models.Model):
+    STATUS_CHOICES = [
+        ('aberta', 'Aberta'),
+        ('diagnostico', 'Em diagnóstico'),
+        ('orcamento', 'Orçamento enviado'),
+        ('aguardando_aprovacao', 'Aguardando aprovação'),
+        ('manutencao', 'Em manutenção'),
+        ('conferencia', 'Em conferência'),
+        ('pronto', 'Pronto para retirada'),
+        ('entregue', 'Entregue'),
     ]
 
-    veiculo = models.ForeignKey(
-        Veiculo,
-        on_delete=models.CASCADE,
-        related_name='manutencoes',
-        verbose_name='Veículo'
+    cliente = models.ForeignKey(
+        Cliente, on_delete=models.CASCADE, related_name='ordens_servico'
     )
-    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES, verbose_name='Tipo de Serviço')
-    descricao = models.TextField(verbose_name='Descrição', blank=True)
-    data = models.DateField(verbose_name='Data do Serviço')
-    quilometragem = models.IntegerField(verbose_name='Quilometragem', null=True, blank=True)
-    custo = models.DecimalField(max_digits=8, decimal_places=2, verbose_name='Custo', null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Criado em')
-
-    class Meta:
-        ordering = ['-data']
-        verbose_name = 'Manutenção'
-        verbose_name_plural = 'Manutenções'
+    veiculo = models.ForeignKey(
+        Veiculo, on_delete=models.CASCADE, related_name='ordens_servico'
+    )
+    problema_relatado = models.TextField()
+    status = models.CharField(
+        max_length=30, choices=STATUS_CHOICES, default='aberta'
+    )
+    aprovado_cliente = models.BooleanField(default=False)
+    data_criacao = models.DateTimeField(auto_now_add=True)
+    data_atualizacao = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.get_tipo_display()} - {self.veiculo.placa} ({self.data})'
+        return f'OS #{self.id} - {self.veiculo}'
+
+
+class Diagnostico(models.Model):
+    ordem_servico = models.OneToOneField(
+        OrdemServico, on_delete=models.CASCADE, related_name='diagnostico'
+    )
+    mecanico_responsavel = models.CharField(max_length=100)
+    problema_encontrado = models.TextField()
+    data_diagnostico = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Diagnóstico da {self.ordem_servico}'
+
+
+class Servico(models.Model):
+    STATUS_CHOICES = [
+        ('aguardando', 'Aguardando'),
+        ('andamento', 'Em andamento'),
+        ('concluido', 'Concluído'),
+    ]
+
+    ordem_servico = models.ForeignKey(
+        OrdemServico, on_delete=models.CASCADE, related_name='servicos'
+    )
+    descricao = models.CharField(max_length=200)
+    valor = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default='aguardando'
+    )
+
+    def __str__(self):
+        return f'{self.descricao} - {self.get_status_display()}'
+
+
+class Pagamento(models.Model):
+    FORMA_PAGAMENTO_CHOICES = [
+        ('dinheiro', 'Dinheiro'),
+        ('pix', 'Pix'),
+        ('cartao_credito', 'Cartão de Crédito'),
+        ('cartao_debito', 'Cartão de Débito'),
+    ]
+
+    ordem_servico = models.OneToOneField(
+        OrdemServico, on_delete=models.CASCADE, related_name='pagamento'
+    )
+    valor_final = models.DecimalField(max_digits=10, decimal_places=2)
+    forma_pagamento = models.CharField(
+        max_length=20, choices=FORMA_PAGAMENTO_CHOICES
+    )
+    data_entrega = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return f'Pagamento da {self.ordem_servico}'

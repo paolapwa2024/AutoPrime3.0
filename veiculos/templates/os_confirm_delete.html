@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Excluir OS - AutoPrime{% endblock %}
+
+{% block content %}
+<h1>Confirmar exclusão</h1>
+
+<p>Tem certeza que deseja excluir a <strong>OS #{{ ordem.id }}</strong> do veículo
+    <strong>{{ ordem.veiculo }}</strong>?
+</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sim, excluir</button>
+    <a href="{% url 'os_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

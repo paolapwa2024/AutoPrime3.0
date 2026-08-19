@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block title %}Veículos - AutoPrime{% endblock %}
+{% block title %}Diagnósticos - AutoPrime{% endblock %}
 
 {% block content %}
 <style>
@@ -14,7 +14,7 @@
         background-repeat: no-repeat;
     }
 
-    .conteudo-veiculos {
+    .conteudo-diagnosticos {
         background-color: #ffffff;
         padding: 2rem;
         border-radius: 8px;
@@ -24,7 +24,7 @@
         margin-right: auto;
     }
 
-    .veiculos-header {
+    .diagnosticos-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -33,18 +33,17 @@
         margin-bottom: 1rem;
     }
 
-    .veiculos-header h1 {
+    .diagnosticos-header h1 {
         margin: 0;
         font-size: 2rem;
     }
 
-    .veiculos-header .btn {
+    .diagnosticos-header .btn {
         white-space: nowrap;
         text-align: center;
         width: fit-content;
     }
 
-    /* Impede que os botões Editar/Excluir quebrem linha dentro da célula */
     .table-responsive td .btn {
         white-space: nowrap;
     }
@@ -53,28 +52,26 @@
         white-space: nowrap;
     }
 
-    /* Tablets e telas médias */
     @media (max-width: 768px) {
-        .conteudo-veiculos {
+        .conteudo-diagnosticos {
             padding: 1.5rem;
         }
 
-        .veiculos-header h1 {
+        .diagnosticos-header h1 {
             font-size: 1.75rem;
         }
     }
 
-    /* Celulares */
     @media (max-width: 400px) {
-        .conteudo-veiculos {
+        .conteudo-diagnosticos {
             padding: 1.2rem;
         }
 
-        .veiculos-header h1 {
+        .diagnosticos-header h1 {
             font-size: 1.5rem;
         }
 
-        .veiculos-header .btn {
+        .diagnosticos-header .btn {
             font-size: 0.75rem;
             padding: 0.4rem 0.7rem;
         }
@@ -90,35 +87,26 @@
     }
 </style>
 
-<div class="conteudo-veiculos">
-    <div class="veiculos-header">
-        <h1 style="color: rgb(0, 0, 0);">Veículos Cadastrados</h1>
-        <a href="{% url 'veiculo_create' %}" class="btn btn-primary">+ Cadastrar novo veículo</a>
+<div class="conteudo-diagnosticos">
+    <div class="diagnosticos-header">
+        <h1 style="color: black;">Diagnósticos</h1>
+        <a href="{% url 'diagnostico_create' %}" class="btn btn-primary">+ Novo Diagnóstico</a>
     </div>
 
     <div class="table-responsive">
         <table class="table table-striped table-bordered">
-                        <thead class="table-dark">
-                <tr>
-                    <th>Marca</th>
-                    <th>Modelo</th>
-                    <th>Ano</th>
-                    <th>Placa</th>
-                    <th>Cliente</th>
-                    <th>Ações</th>
-                </tr>
+            <thead class="table-dark">
+                <tr><th>OS</th><th>Mecânico</th><th>Problema encontrado</th><th>Ações</th></tr>
             </thead>
             <tbody>
-                {% for veiculo in veiculos %}
+                {% for d in diagnosticos %}
                 <tr>
-                    <td>{{ veiculo.marca }}</td>
-                    <td>{{ veiculo.modelo }}</td>
-                    <td>{{ veiculo.ano }}</td>
-                    <td>{{ veiculo.placa }}</td>
-                    <td>{{ veiculo.cliente.nome }}</td>
+                    <td>#{{ d.ordem_servico.id }}</td>
+                    <td>{{ d.mecanico_responsavel }}</td>
+                    <td>{{ d.problema_encontrado }}</td>
                     <td>
-                        <a href="{% url 'veiculo_update' veiculo.pk %}" class="btn btn-sm btn-warning">Editar</a>
-                        <a href="{% url 'veiculo_delete' veiculo.pk %}" class="btn btn-sm btn-danger">Excluir</a>
+                        <a href="{% url 'diagnostico_update' d.pk %}" class="btn btn-sm btn-warning">Editar</a>
+                        <a href="{% url 'diagnostico_delete' d.pk %}" class="btn btn-sm btn-danger">Excluir</a>
                     </td>
                 </tr>
                 {% endfor %}

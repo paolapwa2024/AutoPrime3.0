@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block title %}Veículos - AutoPrime{% endblock %}
+{% block title %}Ordens de Serviço - AutoPrime{% endblock %}
 
 {% block content %}
 <style>
@@ -14,7 +14,7 @@
         background-repeat: no-repeat;
     }
 
-    .conteudo-veiculos {
+    .conteudo-os {
         background-color: #ffffff;
         padding: 2rem;
         border-radius: 8px;
@@ -24,7 +24,7 @@
         margin-right: auto;
     }
 
-    .veiculos-header {
+    .os-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -33,18 +33,17 @@
         margin-bottom: 1rem;
     }
 
-    .veiculos-header h1 {
+    .os-header h1 {
         margin: 0;
         font-size: 2rem;
     }
 
-    .veiculos-header .btn {
+    .os-header .btn {
         white-space: nowrap;
         text-align: center;
         width: fit-content;
     }
 
-    /* Impede que os botões Editar/Excluir quebrem linha dentro da célula */
     .table-responsive td .btn {
         white-space: nowrap;
     }
@@ -53,28 +52,26 @@
         white-space: nowrap;
     }
 
-    /* Tablets e telas médias */
     @media (max-width: 768px) {
-        .conteudo-veiculos {
+        .conteudo-os {
             padding: 1.5rem;
         }
 
-        .veiculos-header h1 {
+        .os-header h1 {
             font-size: 1.75rem;
         }
     }
 
-    /* Celulares */
     @media (max-width: 400px) {
-        .conteudo-veiculos {
+        .conteudo-os {
             padding: 1.2rem;
         }
 
-        .veiculos-header h1 {
+        .os-header h1 {
             font-size: 1.5rem;
         }
 
-        .veiculos-header .btn {
+        .os-header .btn {
             font-size: 0.75rem;
             padding: 0.4rem 0.7rem;
         }
@@ -90,35 +87,35 @@
     }
 </style>
 
-<div class="conteudo-veiculos">
-    <div class="veiculos-header">
-        <h1 style="color: rgb(0, 0, 0);">Veículos Cadastrados</h1>
-        <a href="{% url 'veiculo_create' %}" class="btn btn-primary">+ Cadastrar novo veículo</a>
+<div class="conteudo-os">
+    <div class="os-header">
+        <h1 style="color: black;">Ordens de Serviço</h1>
+        <a href="{% url 'os_create' %}" class="btn btn-primary">+ Nova OS</a>
     </div>
 
     <div class="table-responsive">
         <table class="table table-striped table-bordered">
-                        <thead class="table-dark">
+            <thead class="table-dark">
                 <tr>
-                    <th>Marca</th>
-                    <th>Modelo</th>
-                    <th>Ano</th>
-                    <th>Placa</th>
+                    <th>OS</th>
                     <th>Cliente</th>
+                    <th>Veículo</th>
+                    <th>Status</th>
+                    <th>Data</th>
                     <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
-                {% for veiculo in veiculos %}
+                {% for ordem in ordens %}
                 <tr>
-                    <td>{{ veiculo.marca }}</td>
-                    <td>{{ veiculo.modelo }}</td>
-                    <td>{{ veiculo.ano }}</td>
-                    <td>{{ veiculo.placa }}</td>
-                    <td>{{ veiculo.cliente.nome }}</td>
+                    <td>#{{ ordem.id }}</td>
+                    <td>{{ ordem.cliente.nome }}</td>
+                    <td>{{ ordem.veiculo.marca }} {{ ordem.veiculo.modelo }} - {{ ordem.veiculo.placa }}</td>
+                    <td><span class="badge bg-secondary">{{ ordem.get_status_display }}</span></td>
+                    <td>{{ ordem.data_criacao|date:"d/m/Y" }}</td>
                     <td>
-                        <a href="{% url 'veiculo_update' veiculo.pk %}" class="btn btn-sm btn-warning">Editar</a>
-                        <a href="{% url 'veiculo_delete' veiculo.pk %}" class="btn btn-sm btn-danger">Excluir</a>
+                        <a href="{% url 'os_update' ordem.pk %}" class="btn btn-sm btn-warning">Editar</a>
+                        <a href="{% url 'os_delete' ordem.pk %}" class="btn btn-sm btn-danger">Excluir</a>
                     </td>
                 </tr>
                 {% endfor %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }} - AutoPrime{% endblock %}
+
+{% block content %}
+<h1>{{ titulo }}</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a href="{% url 'os_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

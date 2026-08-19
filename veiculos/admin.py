@@ -1,15 +1,27 @@
 from django.contrib import admin
-from .models import Veiculo, Manutencao
-
-@admin.register(Veiculo)
-class VeiculoAdmin(admin.ModelAdmin):
-    list_display = ('marca', 'modelo', 'ano', 'placa', 'cor', 'proprietario', 'is_active')
-    search_fields = ('marca', 'modelo', 'placa', 'proprietario')
-    list_filter = ('marca', 'is_active', 'ano')
+from .models import (
+    Cliente, Veiculo, OrdemServico, Diagnostico, Servico, Pagamento
+)
 
 
-@admin.register(Manutencao)
-class ManutencaoAdmin(admin.ModelAdmin):
-    list_display = ('veiculo', 'tipo', 'data', 'quilometragem', 'custo')
-    search_fields = ('veiculo__placa', 'veiculo__proprietario')
-    list_filter = ('tipo', 'data')
+admin.site.register(Cliente)
+admin.site.register(Veiculo)
+
+
+class OrdemServicoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'veiculo', 'cliente', 'status', 'data_criacao')
+    list_filter = ('status',)
+    search_fields = ('veiculo__placa', 'cliente__nome')
+
+
+admin.site.register(OrdemServico, OrdemServicoAdmin)
+admin.site.register(Diagnostico)
+
+
+class ServicoAdmin(admin.ModelAdmin):
+    list_display = ('descricao', 'ordem_servico', 'status', 'valor')
+    list_filter = ('status',)
+
+
+admin.site.register(Servico, ServicoAdmin)
+admin.site.register(Pagamento)
